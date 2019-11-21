@@ -1,0 +1,23 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t shaggybb/multi-docker -f client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true shaggybb/multi-docker npm run test
+
+after_success:
+  - docker build -t shaggybb/multi-docker-client ./client
+  - docker build -t shaggybb/multi-docker-nginx ./nginx
+  - docker build -t shaggybb/multi-docker-server ./server
+  - docker build -t shaggybb/multi-docker-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push shaggybb/multi-docker-client
+  - docker push shaggybb/multi-docker-nginx
+  - docker push shaggybb/multi-docker-server
+  - docker push shaggybb/multi-docker-worker
