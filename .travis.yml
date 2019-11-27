@@ -21,3 +21,17 @@ after_success:
   - docker push shaggybb/multi-docker-nginx
   - docker push shaggybb/multi-docker-server
   - docker push shaggybb/multi-docker-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: "eu-west-1"
+  app: "multi-docker"
+  env: "MultiDocker-env"
+  bucket_name: "elasticbeanstalk-eu-west-1-293124574913"
+  bucket_path: "multi-docker"
+  on:
+    branch: master
+  access_key_id: 
+    secure: $AWS_ACCESS_KEY
+  secret_access_key: 
+    secure: $AWS_SECRET_KEY
